@@ -3,7 +3,7 @@
 
 ### Prerequisites
 
-Install PyTorch on Jetson using [this](https://docs.nvidia.com/deeplearning/frameworks/install-pytorch-jetson-platform/index.html) tutorial.
+Install PyTorch on OrangePi 5 using [this](https://pytorch.org/tutorials/intermediate/realtime_rpi.html) tutorial.
 
 ### Installation 
 
