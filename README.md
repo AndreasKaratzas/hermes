@@ -18,7 +18,6 @@ On the client, on a Python 3.10.6 environment run:
 ```powershell
 pip install torch torchvision torchaudio
 pip install pandas
-pip install ipython
 pip install tabulate
 ```
 

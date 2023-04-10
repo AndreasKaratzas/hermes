@@ -3,7 +3,7 @@ import subprocess
 import pandas as pd
 import time
 from tabulate import tabulate
-from IPython.display import clear_output
+import sys
 
 
 def get_sensor_data():
@@ -41,7 +41,9 @@ def print_colored_dataframe(df):
             color = '\033[92m'  # Green
         table.append(f"{color}{value}\033[0m")
 
-    print(tabulate([table], headers=df.columns, tablefmt='pretty'))
+    formatted_table = tabulate([table], headers=df.columns, tablefmt='pretty')
+    sys.stdout.write('\r' + formatted_table)
+    sys.stdout.flush()
 
 
 def check_thresholds(df, thresholds):
@@ -68,6 +70,5 @@ df = pd.DataFrame(data=initial_data, columns=sensor_names)
 while True:
     sensor_data = get_sensor_data()
     df = update_dataframe(df, sensor_data)
-    clear_output(wait=True)
     print_colored_dataframe(df)
     time.sleep(5)  # Adjust the sleep interval (in seconds) between sensor readings as needed
