@@ -10,14 +10,8 @@ Install PyTorch on OrangePi 5 using [this](https://pytorch.org/tutorials/interme
 On the server, run:
 
 ```powershell
-conda env create --file environment.yml
-conda activate hermes
-```
-
-If you either added or removed packages, then you can save a checkpoint of the `conda` environment by:
-
-```powershell
-conda env export --no-builds > environment.yml
+conda create -n hermes python=3.9 pip
+conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
 ```
 
 On the client, on a Python 3.10.6 environment run:
@@ -53,7 +47,7 @@ python server.py --ip 0.0.0.0 --port 8080
 
 Finally, you can perform tests through the client:
 ```powershell
-python client.py --model resnet18 --image n01667114_mud_turtle.jpg --ip 131.230.193.241 --port 8080
+python client.py --model resnet18 --image ../data/n01667114_mud_turtle.jpg --ip 131.230.193.241 --port 8080
 ```
 
 ### Dataset
