@@ -60,7 +60,7 @@ class Client:
             return output
 
 
-def load_imagenet_classes(txt_file='imagenet.txt'):
+def load_imagenet_classes(txt_file='../data/imagenet.txt'):
     with open(txt_file) as f:
         labels = [line.strip() for line in f.readlines()]
     idx_to_label = {idx: label for idx, label in enumerate(labels)}
