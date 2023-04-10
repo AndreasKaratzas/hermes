@@ -91,10 +91,10 @@ def execute_another_function(sensor_index):
 
 
 # Set the temperature thresholds for each sensor
-thresholds = [50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
+thresholds = [50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
 
 # Initialize an empty DataFrame with the sensor names as columns
-sensor_names = [f"Sensor {i}" for i in range(len(thresholds))]
+sensor_names = ["GPU", "LITTLE", "BIG", "NPU", "CENTER", "SOC"]
 
 # Initialize the DataFrame with all zeros
 initial_data = [[0 for _ in range(len(thresholds))]]
