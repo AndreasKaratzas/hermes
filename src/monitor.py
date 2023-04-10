@@ -2,8 +2,7 @@ import os
 import subprocess
 import pandas as pd
 import time
-from io import StringIO
-from IPython.display import clear_output, display
+from tabulate import tabulate
 
 
 def get_sensor_data():
@@ -27,22 +26,21 @@ def update_dataframe(df, sensor_data):
     return df
 
 
-def style_dataframe(df):
-    def highlight_changes(s):
-        colors = []
-        for i in range(len(s)):
-            if i == 0:
-                colors.append('background-color: red')
-            elif s.iloc[i] > s.iloc[i - 1]:
-                colors.append('background-color: red')
-            elif s.iloc[i] < s.iloc[i - 1]:
-                colors.append('background-color: green')
-            else:
-                colors.append('')
-        return colors
+def print_colored_dataframe(df):
+    last_row = df.iloc[-1]
+    prev_row = df.iloc[-2] if len(df) > 1 else [0] * len(last_row)
 
-    styled_df = df.style.apply(highlight_changes)
-    return styled_df
+    table = []
+    for i in range(len(last_row)):
+        value = last_row[i]
+        color = ''
+        if value > prev_row[i]:
+            color = '\033[91m'  # Red
+        elif value < prev_row[i]:
+            color = '\033[92m'  # Green
+        table.append(f"{color}{value}\033[0m")
+
+    print(tabulate([table], headers=df.columns, tablefmt='pretty'))
 
 
 def check_thresholds(df, thresholds):
@@ -61,13 +59,13 @@ thresholds = [50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
 
 # Initialize an empty DataFrame with the sensor names as columns
 sensor_names = [f"Sensor {i}" for i in range(len(thresholds))]
+
+# Initialize the DataFrame with all zeros
 initial_data = [[0 for _ in range(len(thresholds))]]
 df = pd.DataFrame(data=initial_data, columns=sensor_names)
 
 while True:
     sensor_data = get_sensor_data()
     df = update_dataframe(df, sensor_data)
-    styled_df = style_dataframe(df)
-    clear_output(wait=True)
-    display(styled_df)
+    print_colored_dataframe(df)
     time.sleep(5)  # Adjust the sleep interval (in seconds) between sensor readings as needed
