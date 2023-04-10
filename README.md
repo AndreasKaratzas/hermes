@@ -17,6 +17,8 @@ conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvi
 On the client, on a Python 3.10.6 environment run:
 ```powershell
 pip install torch torchvision torchaudio
+pip install pandas
+pip install ipython
 ```
 
 ### Usage
