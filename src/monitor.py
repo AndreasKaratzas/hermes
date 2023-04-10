@@ -11,12 +11,34 @@ def get_sensor_data():
         "sensors", shell=True).decode("utf-8")
     sensor_lines = sensor_output.split("\n")
 
-    sensor_data = []
+    sensor_values = {
+        'GPU': 0,
+        'LITTLE': 0,
+        'BIG0': 0,
+        'BIG1': 0,
+        'NPU': 0,
+        'CENTER': 0,
+        'SOC': 0
+    }
+
     for line in sensor_lines:
-        if "temp1" in line:
-            parts = line.strip().split()
-            temp_value = float(parts[1].strip("+").strip("°C"))
-            sensor_data.append(temp_value)
+        if "gpu_thermal-virtual-0" in line:
+            sensor_values['GPU'] = float(line.split('+')[1].split('°')[0])
+        elif "littlecore_thermal-virtual-0" in line:
+            sensor_values['LITTLE'] = float(line.split('+')[1].split('°')[0])
+        elif "bigcore0_thermal-virtual-0" in line:
+            sensor_values['BIG0'] = float(line.split('+')[1].split('°')[0])
+        elif "npu_thermal-virtual-0" in line:
+            sensor_values['NPU'] = float(line.split('+')[1].split('°')[0])
+        elif "center_thermal-virtual-0" in line:
+            sensor_values['CENTER'] = float(line.split('+')[1].split('°')[0])
+        elif "bigcore1_thermal-virtual-0" in line:
+            sensor_values['BIG1'] = float(line.split('+')[1].split('°')[0])
+        elif "soc_thermal-virtual-0" in line:
+            sensor_values['SOC'] = float(line.split('+')[1].split('°')[0])
+
+    big = (sensor_values['BIG0'] + sensor_values['BIG1']) / 2
+    sensor_data = [sensor_values['GPU'], sensor_values['LITTLE'], big, sensor_values['NPU'], sensor_values['CENTER'], sensor_values['SOC']]
 
     return sensor_data
 
