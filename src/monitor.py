@@ -27,6 +27,10 @@ def update_dataframe(df, sensor_data):
     return df
 
 
+def clear_terminal():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
 def print_colored_dataframe(df):
     last_row = df.iloc[-1]
     prev_row = df.iloc[-2] if len(df) > 1 else [0] * len(last_row)
@@ -42,8 +46,8 @@ def print_colored_dataframe(df):
         table.append(f"{color}{value}\033[0m")
 
     formatted_table = tabulate([table], headers=df.columns, tablefmt='pretty')
-    sys.stdout.write('\r' + formatted_table)
-    sys.stdout.flush()
+    clear_terminal()
+    print(formatted_table)
 
 
 def check_thresholds(df, thresholds):
