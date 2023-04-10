@@ -7,6 +7,8 @@ Install PyTorch on OrangePi 5 using [this](https://pytorch.org/tutorials/interme
 
 ### Installation 
 
+On the server, run:
+
 ```powershell
 conda env create --file environment.yml
 conda activate hermes
@@ -16,6 +18,11 @@ If you either added or removed packages, then you can save a checkpoint of the `
 
 ```powershell
 conda env export --no-builds > environment.yml
+```
+
+On the client, on a Python 3.10.6 environment run:
+```powershell
+pip install torch torchvision torchaudio
 ```
 
 ### Usage
