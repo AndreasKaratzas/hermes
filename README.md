@@ -27,6 +27,8 @@ pip install torch torchvision torchaudio
 
 ### Usage
 
+* Demo
+
 First, boot up the server:
 ```powershell
 python server.py
@@ -35,6 +37,23 @@ python server.py
 Then, choose an edge device where PyTorch is installed, and run:
 ```powershell
 python client.py --model resnet18 --image n01667114_mud_turtle.jpg
+```
+
+* Real example:
+
+You may need to allow TCP traffic on a port:
+```powershell
+sudo ufw allow 8080
+```
+
+Then, start the server:
+```powershell
+python server.py --ip 0.0.0.0 --port 8080
+```
+
+Finally, you can perform tests through the client:
+```powershell
+python client.py --model resnet18 --image n01667114_mud_turtle.jpg --ip 131.230.193.241 --port 8080
 ```
 
 ### Dataset
