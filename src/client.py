@@ -189,6 +189,12 @@ class Client:
                     return output
                 else:
                     x = layer(x)
+            _, predicted = torch.max(output.data, 1)
+            predicted_class = idx_to_label[predicted.item()]
+            self.text = f"Constraints were NOT violated at layer {i}.\nConstraint:\n\tavg: {round(self.constraints.get('avg'))}, max: {round(self.constraints.get('max'))}.\nViolation:\n\tavg: {round(np.average(np.array(self.sensors())))}, max: {round(np.max(np.array(self.sensors())))}.\nInference was completed on the client..."
+            self.sensor_data = np.array(self.sensors())
+            self.predicted_class = predicted_class
+            self._render_frame()
             return x
         
     def process_dataset(self, dataset, input_transforms, idx_to_label):
