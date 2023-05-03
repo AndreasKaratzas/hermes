@@ -16,7 +16,7 @@ import struct
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+import matplotlib
 import json
 import time
 import threading
@@ -136,7 +136,7 @@ class Client:
 
         # Create a gradient bar plot for the sensor data
         n_bars = len(sensor_data)
-        colormap = cm.get_cmap("inferno")
+        colormap = matplotlib.colormaps["inferno"]
         norm = plt.Normalize(sensor_data.min(), sensor_data.max())
         colors = colormap(norm(sensor_data))
 
