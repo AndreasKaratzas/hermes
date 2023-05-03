@@ -49,7 +49,7 @@ class Client:
 
         self.text = ""
         self.predicted_class = ""
-        self.sensor_data = np.array([0, 0, 0, 0, 0, 0, 0, 0])
+        self.sensor_data = np.array([0, 0, 0, 0, 0, 0, 0])
         self.render_mode = "human"
 
         with open(filename, 'r') as f:
@@ -61,7 +61,7 @@ class Client:
         self.clock = None
 
         self.labels = [
-            "AUX", "CPU", "thermal", "Tboard", "AO", "GPU", "Tdiode", "PMIC"
+            "AUX", "CPU", "thermal", "Tboard", "AO", "GPU", "Tdiode"
         ]
 
     def sendall(self, s, data):

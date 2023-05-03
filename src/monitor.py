@@ -15,8 +15,7 @@ def get_sensor_data_demo():
         {'Tboard': random.randint(0, 100)},
         {'AO': random.randint(0, 100)},
         {'GPU': random.randint(0, 100)},
-        {'Tdiode': random.randint(0, 100)},
-        {'PMIC': random.randint(0, 100)}
+        {'Tdiode': random.randint(0, 100)}
     ]
 
     # get only the temperature values
@@ -79,8 +78,7 @@ def get_sensor_data_jetson():
         {'Tboard': 0},
         {'AO': 0},
         {'GPU': 0},
-        {'Tdiode': 0}, 
-        {'PMIC': 0}
+        {'Tdiode': 0}
     ]
 
     for line in sensor_lines:
@@ -98,8 +96,6 @@ def get_sensor_data_jetson():
             sensor_values[5]['GPU'] = float(line.split(':')[1].strip().split('C')[0])
         elif "Tdiode" in line:
             sensor_values[6]['Tdiode'] = float(line.split(':')[1].strip().split('C')[0])
-        elif "PMIC" in line:
-            sensor_values[7]['PMIC'] = float(line.split(':')[1].strip().split('C')[0])
     
     # get only the temperature values
     sensor_data = [list(sensor.values())[0] for sensor in sensor_values]
