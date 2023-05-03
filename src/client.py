@@ -1,10 +1,15 @@
-import pygame
+
+import os 
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+os.environ['DISPLAY'] = 'localhost:10.0'
+
 import sys 
 sys.path.append('./')
 sys.path.append('../')
 sys.path.append('../../')
 
 import argparse
+import pygame
 import socket
 import pickle
 import struct
@@ -15,7 +20,6 @@ import matplotlib.cm as cm
 import json
 import time
 import threading
-import os
 import torchvision.models as models
 from PIL import Image
 from torchvision.transforms import (
