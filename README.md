@@ -12,6 +12,7 @@ On the server, run:
 ```bash
 conda create -n hermes python=3.9 pip
 conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+conda install numpy
 ```
 
 On the client, on a Python 3.10.6 environment run:
@@ -19,6 +20,10 @@ On the client, on a Python 3.10.6 environment run:
 pip install torch torchvision torchaudio
 pip install pandas
 pip install tabulate
+pip install Pillow
+pip install pygame
+pip install numpy
+pip install matplotlib
 ```
 
 ### Usage

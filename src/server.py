@@ -2,6 +2,7 @@ import argparse
 import socket
 import pickle
 import struct
+import numpy as np
 import torch
 import torchvision.models as models
 
@@ -30,6 +31,7 @@ class Server:
         return pickle.loads(data)
 
     def start(self):
+        self.model = self.model.eval()
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.bind((self.host, self.port))
@@ -41,17 +43,22 @@ class Server:
                 with conn:
                     print(f"Connected by {addr}")
                     while True:
-                        input_tensor = self.recv_object(conn)
-                        if input_tensor is None:
+                        input = self.recv_object(conn)
+                        
+                        if input is None:
                             break
+                        
+                        input_tensor = input.get("data", None)
+                        layer_ckp = input.get("layer", None)
 
-                        x = self.model.layer3(input_tensor)
-                        x = self.model.layer4(x)
-                        x = self.model.avgpool(x)
-                        x = torch.flatten(x, 1)
-                        output = self.model.fc(x)
+                        x = input_tensor
+                        for i, layer in enumerate(self.model.children()):
+                            if i >= layer_ckp:
+                                if np.prod(x.shape) == np.max(x.shape):
+                                    x = torch.flatten(x, 1)
+                                x = layer(x)
 
-                        output_data = pickle.dumps(output)
+                        output_data = pickle.dumps(x)
                         conn.sendall(struct.pack(
                             '!I', len(output_data)) + output_data)
 
@@ -66,7 +73,7 @@ if __name__ == '__main__':
                         help='Torchvision model to use')
     args = parser.parse_args()
 
-    model = models.__dict__[args.model](weights=models.ResNet18_Weights.IMAGENET1K_V1)
+    model = models.__dict__[args.model](weights="IMAGENET1K_V1")
     model.eval()
 
     server = Server(model, host=args.ip, port=args.port)

@@ -4,9 +4,25 @@ import pandas as pd
 import time
 from tabulate import tabulate
 import sys
+import random
 
 
-def get_sensor_data():
+def get_sensor_data_demo():
+    sensor_data = [
+        {'GPU': random.randint(0, 100)},
+        {'LITTLE': random.randint(0, 100)},
+        {'BIG': random.randint(0, 100)},
+        {'NPU': random.randint(0, 100)},
+        {'CENTER': random.randint(0, 100)},
+        {'SOC': random.randint(0, 100)}
+    ]
+
+    # get only the temperature values
+    sensor_data = [list(sensor.values())[0] for sensor in sensor_data]
+    
+    return sensor_data
+
+def get_sensor_data_orange():
     sensor_output = subprocess.check_output(
         "sensors", shell=True).decode("utf-8")
     sensor_lines = sensor_output.split("\n")
@@ -47,6 +63,44 @@ def get_sensor_data():
     sensor_data = [sensor_values['GPU'], sensor_values['LITTLE'], big,
                    sensor_values['NPU'], sensor_values['CENTER'], sensor_values['SOC']]
 
+    return sensor_data
+
+def get_sensor_data_jetson():
+    sensor_output = subprocess.check_output(
+        "tegrastats | head -n 1 | grep -oP '\w+@\d+(\.\d+)?C' | awk -F '@' '{print $1 \": \" $2}'", shell=True).decode("utf-8")
+    sensor_lines = sensor_output.split("\n")
+
+    sensor_values = {
+        'AUX': 0,
+        'CPU': 0,
+        'thermal': 0,
+        'Tboard': 0,
+        'AO': 0,
+        'GPU': 0,
+        'Tdiode': 0, 
+        'PMIC': 0,
+    }
+
+    sensor_data = {}
+    for line in sensor_lines:
+        if "AUX" in line:
+            sensor_values['AUX'] = float(line.split(':')[1].split('C')[0])
+        elif "CPU" in line:
+            sensor_values['CPU'] = float(line.split(':')[1].split('C')[0])
+        elif "thermal" in line:
+            sensor_values['thermal'] = float(line.split(':')[1].split('C')[0])
+        elif "Tboard" in line:
+            sensor_values['Tboard'] = float(line.split(':')[1].split('C')[0])
+        elif "AO" in line:
+            sensor_values['AO'] = float(line.split(':')[1].split('C')[0])
+        elif "GPU" in line:
+            sensor_values['GPU'] = float(line.split(':')[1].split('C')[0])
+        elif "Tdiode" in line:
+            sensor_values['Tdiode'] = float(line.split(':')[1].split('C')[0])
+        elif "PMIC" in line:
+            sensor_values['PMIC'] = float(line.split(':')[1].split('C')[0])
+        else:
+            continue
     return sensor_data
 
 
@@ -90,18 +144,19 @@ def execute_another_function(sensor_index):
     print(f"Sensor {sensor_index} has crossed the threshold")
 
 
-# Set the temperature thresholds for each sensor
-thresholds = [50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
+if __name__ == "__main__":
+    # Set the temperature thresholds for each sensor
+    thresholds = [50.0, 50.0, 50.0, 50.0, 50.0, 50.0]
 
-# Initialize an empty DataFrame with the sensor names as columns
-sensor_names = ["GPU", "LITTLE", "BIG", "NPU", "CENTER", "SOC"]
+    # Initialize an empty DataFrame with the sensor names as columns
+    sensor_names = ["GPU", "LITTLE", "BIG", "NPU", "CENTER", "SOC"]
 
-# Initialize the DataFrame with all zeros
-initial_data = [[0 for _ in range(len(thresholds))]]
-df = pd.DataFrame(data=initial_data, columns=sensor_names)
+    # Initialize the DataFrame with all zeros
+    initial_data = [[0 for _ in range(len(thresholds))]]
+    df = pd.DataFrame(data=initial_data, columns=sensor_names)
 
-while True:
-    sensor_data = get_sensor_data()
-    df = update_dataframe(df, sensor_data)
-    print_colored_dataframe(df)
-    time.sleep(5)  # Adjust the sleep interval (in seconds) between sensor readings as needed
+    while True:
+        sensor_data = get_sensor_data_orange()
+        df = update_dataframe(df, sensor_data)
+        print_colored_dataframe(df)
+        time.sleep(5)  # Adjust the sleep interval (in seconds) between sensor readings as needed
