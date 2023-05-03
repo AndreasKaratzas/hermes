@@ -188,6 +188,8 @@ class Client:
 
                     return output
                 else:
+                    if np.prod(x.shape) == np.max(x.shape):
+                        x = torch.flatten(x, 1)
                     x = layer(x)
             
             _, predicted = torch.max(x.data, 1)
