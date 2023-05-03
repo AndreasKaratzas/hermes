@@ -22,6 +22,7 @@ import time
 import threading
 import torchvision.models as models
 from PIL import Image
+from pygame.locals import *
 from torchvision.transforms import (
     Compose, 
     Resize, 
@@ -45,6 +46,11 @@ class Client:
         self.port = port
         self.demo = demo
         self.delay = delay
+
+        self.text = ""
+        self.predicted_class = ""
+        self.sensor_data = np.array([0, 0, 0, 0, 0, 0, 0, 0])
+        self.render_mode = "human"
 
         with open(filename, 'r') as f:
             self.constraints = json.load(f)
@@ -90,14 +96,9 @@ class Client:
     
     def sensors(self):
         if self.demo:
-            response = get_sensor_data_demo()
-            return list(response.values())
+            return get_sensor_data_demo()
         else:
             return get_sensor_data_jetson()
-    
-    def render(self):
-        if self.render_mode == "rgb_array":
-            return self._render_frame()
     
     def _render_frame(self):
         text = self.text
@@ -168,13 +169,10 @@ class Client:
         pygame.display.update()
         self.clock.tick(20)
     
-    def predict(self, input_data):
-        self.model = self.model.eval()
+    def predict(self, x):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((self.host, self.port))
             
-            # Process input data through the layers
-            x = input_data
             for i, layer in enumerate(self.model.children()):
                 if np.average(np.array(self.sensors())) > self.constraints.get("avg") or \
                     np.max(np.array(self.sensors())) > self.constraints.get("max"):
@@ -186,15 +184,15 @@ class Client:
                     self.text = f"Constraints were violated at layer {i}.\nConstraint:\n\tavg: {round(self.constraints.get('avg'))}, max: {round(self.constraints.get('max'))}.\nViolation:\n\tavg: {round(np.average(np.array(self.sensors())))}, max: {round(np.max(np.array(self.sensors())))}.\nSending data to server..."
                     self.sensor_data = np.array(self.sensors())
                     self.predicted_class = predicted_class
-                    self.render_mode = "human"
                     self._render_frame()
-                    
+
                     return output
                 else:
                     x = layer(x)
             return x
         
     def process_dataset(self, dataset, input_transforms, idx_to_label):
+        self.model = self.model.eval()
         for filename in os.listdir(dataset):
             if not is_valid_image_path(os.path.join(dataset, filename)):
                 continue
@@ -327,5 +325,3 @@ if __name__ == '__main__':
     if is_valid_image_dir(args.dataset):
         client = Client(model, host=args.ip, port=args.port, filename=args.filename, demo=args.demo, delay=args.delay)
         client.process_dataset(args.dataset, input_transforms, idx_to_label)
-    
-    

@@ -9,17 +9,19 @@ import random
 
 def get_sensor_data_demo():
     sensor_data = [
+        {'AUX': random.randint(0, 100)},
+        {'CPU': random.randint(0, 100)},
+        {'thermal': random.randint(0, 100)},
+        {'Tboard': random.randint(0, 100)},
+        {'AO': random.randint(0, 100)},
         {'GPU': random.randint(0, 100)},
-        {'LITTLE': random.randint(0, 100)},
-        {'BIG': random.randint(0, 100)},
-        {'NPU': random.randint(0, 100)},
-        {'CENTER': random.randint(0, 100)},
-        {'SOC': random.randint(0, 100)}
+        {'Tdiode': random.randint(0, 100)},
+        {'PMIC': random.randint(0, 100)}
     ]
 
     # get only the temperature values
     sensor_data = [list(sensor.values())[0] for sensor in sensor_data]
-    
+
     return sensor_data
 
 def get_sensor_data_orange():
@@ -101,6 +103,10 @@ def get_sensor_data_jetson():
             sensor_values['PMIC'] = float(line.split(':')[1].split('C')[0])
         else:
             continue
+    
+    # get only the temperature values
+    sensor_data = [list(sensor.values())[0] for sensor in sensor_data]
+    
     return sensor_data
 
 
