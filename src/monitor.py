@@ -72,40 +72,37 @@ def get_sensor_data_jetson():
         "tegrastats | head -n 1 | grep -oP '\w+@\d+(\.\d+)?C' | awk -F '@' '{print $1 \": \" $2}'", shell=True).decode("utf-8")
     sensor_lines = sensor_output.split("\n")
 
-    sensor_values = {
-        'AUX': 0,
-        'CPU': 0,
-        'thermal': 0,
-        'Tboard': 0,
-        'AO': 0,
-        'GPU': 0,
-        'Tdiode': 0, 
-        'PMIC': 0,
-    }
+    sensor_values = [
+        {'AUX': 0},
+        {'CPU': 0},
+        {'thermal': 0},
+        {'Tboard': 0},
+        {'AO': 0},
+        {'GPU': 0},
+        {'Tdiode': 0}, 
+        {'PMIC': 0}
+    ]
 
-    sensor_data = {}
     for line in sensor_lines:
         if "AUX" in line:
-            sensor_values['AUX'] = float(line.split(':')[1].split('C')[0])
+            sensor_values[0]['AUX'] = float(line.split(':')[1].strip().split('C')[0])
         elif "CPU" in line:
-            sensor_values['CPU'] = float(line.split(':')[1].split('C')[0])
+            sensor_values[1]['CPU'] = float(line.split(':')[1].strip().split('C')[0])
         elif "thermal" in line:
-            sensor_values['thermal'] = float(line.split(':')[1].split('C')[0])
+            sensor_values[2]['thermal'] = float(line.split(':')[1].strip().split('C')[0])
         elif "Tboard" in line:
-            sensor_values['Tboard'] = float(line.split(':')[1].split('C')[0])
+            sensor_values[3]['Tboard'] = float(line.split(':')[1].strip().split('C')[0])
         elif "AO" in line:
-            sensor_values['AO'] = float(line.split(':')[1].split('C')[0])
+            sensor_values[4]['AO'] = float(line.split(':')[1].strip().split('C')[0])
         elif "GPU" in line:
-            sensor_values['GPU'] = float(line.split(':')[1].split('C')[0])
+            sensor_values[5]['GPU'] = float(line.split(':')[1].strip().split('C')[0])
         elif "Tdiode" in line:
-            sensor_values['Tdiode'] = float(line.split(':')[1].split('C')[0])
+            sensor_values[6]['Tdiode'] = float(line.split(':')[1].strip().split('C')[0])
         elif "PMIC" in line:
-            sensor_values['PMIC'] = float(line.split(':')[1].split('C')[0])
-        else:
-            continue
+            sensor_values[7]['PMIC'] = float(line.split(':')[1].strip().split('C')[0])
     
     # get only the temperature values
-    sensor_data = [list(sensor.values())[0] for sensor in sensor_data]
+    sensor_data = [list(sensor.values())[0] for sensor in sensor_values]
     
     return sensor_data
 
