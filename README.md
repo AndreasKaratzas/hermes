@@ -54,7 +54,7 @@ python server.py --ip 0.0.0.0 --port 8080
 
 Finally, you can perform tests through the client:
 ```bash
-python client.py --model resnet18 --image ../data/n01667114_mud_turtle.jpg --ip 131.230.193.241 --port 8080
+python client.py --model resnet18 --image ../data/n01667114_mud_turtle.jpg --ip www.xxx.yyy.zzz --port 8080
 ```
 
 ### Dataset
